@@ -8,10 +8,15 @@
 import UIKit
 
 class ViewController: UIViewController {
+    
+    let textPrimaryColor = UIColor(named: "primaryColor")
+    let backgroundImage = UIImage(named: "background")
+    let primaryColor = UIColor(named: "primaryColor")
+    let sunIcon = UIImage(named: "weatherIcon")
 
     private lazy var backgroundView: UIImageView = {
         let imageView = UIImageView(frame: .zero)
-        imageView.image = UIImage(named: "background")
+        imageView.image = backgroundImage
         imageView.contentMode = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
 
@@ -31,7 +36,7 @@ class ViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.systemFont(ofSize: 20)
-        label.textColor = UIColor(named: "primaryColor")
+        label.textColor = textPrimaryColor
         label.text = "Belo Horizonte"
         label.textAlignment = .center
         
@@ -42,7 +47,7 @@ class ViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.systemFont(ofSize: 70, weight: .bold)
-        label.textColor = UIColor(named: "primaryColor")
+        label.textColor = primaryColor
         label.textAlignment = .left
         label.text = "25°C"
         return label
@@ -52,7 +57,7 @@ class ViewController: UIViewController {
         let imageView = UIImageView()
     
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.image = UIImage(named: "weatherIcon")
+        imageView.image = sunIcon
         imageView.contentMode = .scaleAspectFit
         
         return imageView
