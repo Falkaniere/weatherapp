@@ -18,6 +18,7 @@ class ViewController: UIViewController {
 
     private lazy var backgroundView: UIImageView = {
         let imageView = UIImageView(frame: .zero)
+        
         imageView.image = backgroundImage
         imageView.contentMode = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -27,6 +28,7 @@ class ViewController: UIViewController {
     
     private lazy var headerView: UIView = {
         let view = UIView(frame: .zero)
+        
         view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = headerColor
         view.layer.cornerRadius = 20
@@ -36,6 +38,7 @@ class ViewController: UIViewController {
     
     private lazy var cityHeaderLabel: UILabel = {
         let label = UILabel()
+        
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.systemFont(ofSize: 20)
         label.textColor = textPrimaryColor
@@ -47,11 +50,13 @@ class ViewController: UIViewController {
     
     private lazy var tempLabel: UILabel = {
         let label = UILabel()
+        
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.systemFont(ofSize: 70, weight: .bold)
         label.textColor = primaryColor
         label.textAlignment = .left
         label.text = "25°C"
+        
         return label
     }()
     
@@ -198,7 +203,6 @@ class ViewController: UIViewController {
             statsStackView.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: 24),
             statsStackView.widthAnchor.constraint(equalToConstant: 206),
             statsStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
-
         ])
 
     }
