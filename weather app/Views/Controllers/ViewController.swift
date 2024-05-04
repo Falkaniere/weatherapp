@@ -12,7 +12,6 @@ class ViewController: UIViewController {
     private lazy var backgroundView: UIImageView = {
         let imageView = UIImageView(frame: .zero)
         
-        imageView.image = UIImage.backgroundImage
         imageView.contentMode = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
 
@@ -23,7 +22,6 @@ class ViewController: UIViewController {
         let view = UIView(frame: .zero)
         
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = UIColor.headerColor
         view.layer.cornerRadius = 20
         
         return view
@@ -34,8 +32,6 @@ class ViewController: UIViewController {
         
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.systemFont(ofSize: 20)
-        label.textColor = UIColor.textPrimaryColor
-        label.text = "Belo Horizonte"
         label.textAlignment = .center
         
         return label
@@ -46,9 +42,7 @@ class ViewController: UIViewController {
         
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.systemFont(ofSize: 70, weight: .bold)
-        label.textColor = UIColor.primaryColor
         label.textAlignment = .left
-        label.text = "25°C"
         
         return label
     }()    
@@ -56,7 +50,6 @@ class ViewController: UIViewController {
         let imageView = UIImageView()
     
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.image = UIImage.sunIcon
         imageView.contentMode = .scaleAspectFit
         
         return imageView
@@ -77,7 +70,6 @@ class ViewController: UIViewController {
         let label = UILabel()
         
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "1000mm"
         label.font = UIFont.systemFont(ofSize: 12, weight: .semibold)
         label.textColor = UIColor.headerColor
         
@@ -108,7 +100,6 @@ class ViewController: UIViewController {
         let label = UILabel()
         
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "10km/h"
         label.font = UIFont.systemFont(ofSize: 12, weight: .semibold)
         label.textColor = UIColor.headerColor
         
@@ -183,14 +174,44 @@ class ViewController: UIViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.backgroundColor = .clear
         tableView.dataSource = self
+        tableView.delegate = self
         tableView.register(DailyForecastTableViewCell.self, forCellReuseIdentifier: DailyForecastTableViewCell.identifier)
         
         return tableView
     }()
+    
+    private let service = Service()
+    private var city: City = City(lat: "-19.919048", long: "-43.938636", name: "Belo Horizonte")
+    private var forecastResponse: ForecastResponse?
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
+        fetchData()
+    }
+    
+    private func fetchData() {
+        service.fetchData(city: city ) { [weak self] response in
+            self?.forecastResponse = response
+            DispatchQueue.main.sync {
+                self?.loadData()
+            }
+        }
+    }
+    
+    private func loadData() {
+        cityHeaderLabel.text = city.name
+        tempLabel.text = forecastResponse?.current.temp.toCelsius()
+        humidityValueLabel.text = "\(forecastResponse?.current.humidity ?? 0) mm"
+        windValueLabel.text = "\(forecastResponse?.current.windSpeed ?? 0.0)km/h"
+        backgroundView.image = forecastResponse?.current.dt.isDayTime() ?? true ? UIImage.backgroundDayImage : UIImage.backgroundNightImage
+        weatherIcon.image = UIImage(named: forecastResponse?.current.weather.first?.icon ?? "")
+        headerView.backgroundColor = forecastResponse?.current.dt.isDayTime() ?? true ? UIColor.headerColor : UIColor.softGray
+        cityHeaderLabel.textColor = forecastResponse?.current.dt.isDayTime() ?? true ? UIColor.textPrimaryColor : UIColor.headerColor
+        tempLabel.textColor = forecastResponse?.current.dt.isDayTime() ?? true ? UIColor.textPrimaryColor : UIColor.headerColor
+        
+        hourlyCollectionView.reloadData()
+        dailyForecastTableView.reloadData()
     }
 
     private func setupView() {
@@ -277,25 +298,48 @@ class ViewController: UIViewController {
 
 extension ViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10
+        forecastResponse?.hourly.count ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HourlyForecastCollectionViewCell.identifier, for: indexPath)
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HourlyForecastCollectionViewCell.identifier, for: indexPath) as? HourlyForecastCollectionViewCell else {
+            return UICollectionViewCell()
+        }
+        
+        let forecast = forecastResponse?.hourly[indexPath.row]
+        
+        cell.loadData(
+            time: forecast?.dt.toHourFormat(),
+            icon: UIImage(named: forecast?.weather.first?.icon ?? ""),
+            temp: forecast?.temp.toCelsius())
         
         return cell
     }
 }
 
-extension ViewController: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 10
+extension ViewController: UITableViewDataSource, UITableViewDelegate {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection   section: Int) -> Int {
+        forecastResponse?.daily.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: DailyForecastTableViewCell.identifier, for: indexPath)
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: DailyForecastTableViewCell.identifier, for: indexPath) as? DailyForecastTableViewCell else {
+            return UITableViewCell()
+        }
+        
+        let forecast = forecastResponse?.daily[indexPath.row]
+        cell.loadData(
+            weekDay: forecast?.dt.toWeekdayName().uppercased(),
+            icon: UIImage(named: forecast?.weather.first?.icon ?? ""),
+            maxTemp: forecast?.temp.max.toCelsius(),
+            minTemp: forecast?.temp.min.toCelsius()
+        )
         
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        60
     }
 }
 

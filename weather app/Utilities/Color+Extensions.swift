@@ -16,6 +16,7 @@ extension UIColor {
 }
 
 extension UIImage {
-    static let backgroundImage = UIImage(named: "background")
+    static let backgroundDayImage = UIImage(named: "background-day")
+    static let backgroundNightImage = UIImage(named: "background-night")
     static let sunIcon = UIImage(named: "weatherIcon")
 }
