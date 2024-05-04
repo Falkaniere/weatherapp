@@ -15,7 +15,6 @@ class DailyForecastTableViewCell: UITableViewCell {
         let label = UILabel()
         
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "TER"
         label.textColor = UIColor.headerColor
         label.font = UIFont.systemFont(ofSize: 12, weight: .semibold)
         
@@ -26,7 +25,6 @@ class DailyForecastTableViewCell: UITableViewCell {
         let label = UILabel()
         
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "min 25°C"
         label.textColor = UIColor.headerColor
         label.font = UIFont.systemFont(ofSize: 12, weight: .semibold)
         
@@ -37,7 +35,6 @@ class DailyForecastTableViewCell: UITableViewCell {
         let label = UILabel()
         
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "max 25°C"
         label.textColor = UIColor.headerColor
         label.font = UIFont.systemFont(ofSize: 12, weight: .semibold)
         
@@ -83,17 +80,22 @@ class DailyForecastTableViewCell: UITableViewCell {
         setConstraints()
     }
     
+    func loadData(weekDay: String?, icon: UIImage?, maxTemp: String?, minTemp: String?){
+        weekDayLabel.text = weekDay
+        iconImageView.image = icon
+        maxTemperatureLabel.text = "max \(maxTemp ?? "")"
+        minTemperatureLabel.text = "min \(minTemp ?? "")"
+    }
+    
     private func setHierarchy() {
         contentView.addSubview(stackView)
-        
-        
     }
     
     private func setConstraints() {
         NSLayoutConstraint.activate([
             stackView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 23),
+            stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -23),
             stackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
         ])
         

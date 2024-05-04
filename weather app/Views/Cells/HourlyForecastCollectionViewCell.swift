@@ -12,7 +12,7 @@ class HourlyForecastCollectionViewCell: UICollectionViewCell {
     static let identifier: String = "HourlyForecast"
     
     private lazy var stackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [hourLabel, iconImage, temperatureLabel])
+        let stackView = UIStackView(arrangedSubviews: [hourLabel, iconImageView, temperatureLabel])
         
         stackView.axis = .vertical
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -29,7 +29,6 @@ class HourlyForecastCollectionViewCell: UICollectionViewCell {
     private lazy var hourLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "13:30"
         label.textColor = UIColor.headerColor
         label.font = UIFont.systemFont(ofSize: 10, weight: .semibold)
         label.textAlignment = .center
@@ -40,7 +39,6 @@ class HourlyForecastCollectionViewCell: UICollectionViewCell {
     private lazy var temperatureLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "25°C"
         label.textColor = UIColor.headerColor
         label.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
         label.textAlignment = .center
@@ -48,11 +46,10 @@ class HourlyForecastCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
-    private lazy var iconImage: UIImageView = {
+    private lazy var iconImageView: UIImageView = {
         let imageView = UIImageView()
         
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.image = UIImage.sunIcon
         imageView.contentMode = .scaleAspectFit
         
         return imageView
@@ -67,6 +64,13 @@ class HourlyForecastCollectionViewCell: UICollectionViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    func loadData(time: String?, icon: UIImage?, temp: String?) {
+        hourLabel.text = time
+        iconImageView.image = icon
+        temperatureLabel.text = temp
+    }
+    
     
     private func setupView() {
         setHierarchy()
@@ -84,7 +88,7 @@ class HourlyForecastCollectionViewCell: UICollectionViewCell {
             stackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            iconImage.heightAnchor.constraint(equalToConstant: 33)
+            iconImageView.heightAnchor.constraint(equalToConstant: 33)
         ])
     }
 }
